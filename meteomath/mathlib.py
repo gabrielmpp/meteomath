@@ -12,8 +12,8 @@ def discrete_vertical_integral(zonal_flux, meridional_flux, f, coord = 'pressure
     coord - coordinate to integrate upon
     '''
 
-    if not isinstance(zonal_flux, xr.DataArray) or isinstance(meridional_flux, xr.DataArray):
-        raise ValueError('The inputs should be xarray dataarray')
+    #if not isinstance(zonal_flux, xr.DataArray) or isinstance(meridional_flux, xr.DataArray):
+    #    raise ValueError('The inputs should be xarray dataarray')
 
     if zonal_flux[vertical_coord] != meridional_flux[vertical_coord]:
         raise ValueError('The vertical coordinates should match')
