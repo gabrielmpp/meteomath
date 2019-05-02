@@ -11,12 +11,12 @@ def discrete_vertical_integral(zonal_flux, meridional_flux, f, coord = 'pressure
     f -- function to apply before the vertical integration. Examples: meteomath.divergence or meteomath.vorticity
     coord - coordinate to integrate upon
     '''
-
+    # TODO: finish error handling below
     #if not isinstance(zonal_flux, xr.DataArray) or isinstance(meridional_flux, xr.DataArray):
     #    raise ValueError('The inputs should be xarray dataarray')
 
-    if zonal_flux[coord] != meridional_flux[coord]:
-        raise ValueError('The vertical coordinates should match')
+    #if zonal_flux[coord] != meridional_flux[coord]:
+    #    raise ValueError('The vertical coordinates should match')
 
     vertical_deltas = zonal_flux[coord].diff(coord)
     div = f(zonal_flux, meridional_flux)
