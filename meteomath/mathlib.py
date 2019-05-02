@@ -20,7 +20,7 @@ def discrete_vertical_integral(zonal_flux, meridional_flux, f, coord = 'pressure
 
     vertical_deltas = zonal_flux[coord].diff(coord)
     div = f(zonal_flux, meridional_flux)
-    div = div.interp({coord: pressure_deltas[coord]})
+    div = div.interp({coord: vertical_deltas[coord]})
     div = div*vertical_deltas
     div_int = div.sum(coord)
     return div_int
