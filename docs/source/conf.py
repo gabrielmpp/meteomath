@@ -32,7 +32,7 @@ author = 'Gabriel Perez'
 # The full version, including alpha/beta/rc tags
 release = '1.0'
 
-master_doc = 'meteomath'
+master_doc = 'index'
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
