@@ -1,21 +1,22 @@
-.. Gabriel documentation master file, created by
-   sphinx-quickstart on Thu Sep  5 14:33:20 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+meteomath package
+=================
 
-Welcome to Gabriel's documentation!
-===================================
+Submodules
+----------
+
+meteomath.mathlib module
+------------------------
+
 .. automodule:: meteomath.mathlib
-    :members:
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 
+Module contents
+---------------
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. automodule:: meteomath
+   :members:
+   :undoc-members:
+   :show-inheritance:
