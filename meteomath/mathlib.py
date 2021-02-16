@@ -5,11 +5,12 @@ Set of functions to apply common mathematical operations on xarray DataArrays
 import xarray as xr
 import numpy as np
 from typing import Tuple
-
+from meteomath.finite_differences import derivative_spherical_coords
 
 def interpolate_c_stagger(
         u: xr.DataArray,
-        v: xr.DataArray) -> Tuple[xr.DataArray, xr.DataArray, xr.DataArray]:
+        v: xr.DataArray,
+        h: xr.DataArray) -> Tuple[xr.DataArray, xr.DataArray, xr.DataArray]:
     """
     Function to interpolate regular xr.DataArrays onto the Arakawa C stagger.
 
@@ -19,14 +20,16 @@ def interpolate_c_stagger(
     """
     regular_u, delta_lat_u, delta_lon_u = _assert_regular_latlon_grid(u)
     regular_v, delta_lat_v, delta_lon_v = _assert_regular_latlon_grid(v)
+    regular_h, delta_lat_h, delta_lon_h = _assert_regular_latlon_grid(h)
     assert regular_u, 'u array lat lon grid is not regular'
     assert regular_v, 'v array lat lon grid is not regular'
+    assert regular_h, 'h array lat lon grid is not regular'
     assert delta_lat_u == delta_lat_v, 'u and v lat are not compatible'
     assert delta_lon_u == delta_lon_v, ' u and v lon are not compatible'
     u_new = u.copy(data=np.zeros(u.shape))
     v_new = v.copy(data=np.zeros(v.shape))
-    u_new['latitude'].values = u.latitude - delta_lat_u*0.5
-    v_new['longitude'].values = v.longitude - delta_lon_v*0.5
+    u_new = u_new.assign_coords(latitude=u.latitude - delta_lat_u*0.5)
+    v_new = v_new.assign_coords(longitude=v.longitude - delta_lon_v*0.5)
     u_new = u_new.isel(latitude=slice(None, -1))
     v_new = v_new.isel(longitude=slice(None, -1))
     u_new = u.interp_like(u_new)
@@ -34,7 +37,9 @@ def interpolate_c_stagger(
     h_grid = xr.DataArray(0, dims=['latitude', 'longitude'], coords=[
         u_new.latitude, v_new.longitude
     ])
-    return u_new, v_new, h_grid
+    h_new = h.interp_like(h)
+
+    return u_new, v_new, h_new
 
 
 def _assert_regular_latlon_grid(array: xr.DataArray) -> Tuple[bool, np.array, np.array]:
@@ -54,7 +59,7 @@ def _assert_regular_latlon_grid(array: xr.DataArray) -> Tuple[bool, np.array, np
     return regular, delta_lat, delta_lon
 
 
-def discrete_vertical_integral(zonal_flux, meridional_flux, f, coord = 'pressure'):
+def discrete_vertical_integral(zonal_flux, meridional_flux, f, coord='pressure'):
     """
     Method to compute the discrete integral of an array over a given coordinate.
 
@@ -102,7 +107,7 @@ def divergence(u, v):
     :return: xr.DataArray
     """
 
-    return u.differentiate('x') + v.differentiate('y')
+    return derivative_spherical_coords(u, dim=1) + derivative_spherical_coords(v, dim=0)
 
 
 def vorticity(u, v):
@@ -112,7 +117,7 @@ def vorticity(u, v):
     :param v: xr.DataArray
     :return: xr.DataArray
     """
-    return v.differentiate('x') - u.differentiate('y')
+    return derivative_spherical_coords(v, dim=1) - derivative_spherical_coords(u, dim=0)
 
 
 def strain_rate(u, v):
@@ -122,4 +127,4 @@ def strain_rate(u, v):
     :param v: xr.DataArray
     :return: xr.DataArray
     """
-    return 0.5*(u.differentiate('y') + v.differentiate('x'))
+    return 0.5*(derivative_spherical_coords(u, dim=0) + derivative_spherical_coords(v, dim=1))
